@@ -1,4 +1,3 @@
-using System;
 using System.Net.Http;
 using System.Threading;
 using Cysharp.Threading.Tasks;
@@ -7,6 +6,11 @@ using UnityEngine;
 
 namespace QuickEye.HowToAsync
 {
+    // TODO:
+    // Add README.md
+    // Add spinning cube to demonstrate when main thread is being blocked
+    // categorize examples. (category > good and bad)
+    // explain difference between async and multithreading
     public class DemoSceneController : MonoBehaviour
     {
         [SerializeField]
@@ -192,6 +196,7 @@ namespace QuickEye.HowToAsync
             await UniTask.CompletedTask;
         }
 
+        // TODO: show how Task.Delay can change your current thread
         private async UniTaskVoid SpawningSecondThread_WithoutTaskRun()
         {
         }
