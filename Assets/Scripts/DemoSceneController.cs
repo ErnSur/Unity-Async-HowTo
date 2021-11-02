@@ -7,7 +7,9 @@ namespace QuickEye.HowToAsync
 {
     // TODO:
     // Add README.md
-    // explain difference between async and multithreading
+    //  explain difference between async and multithreading
+    // Add "Open Script" feature
+    // Move each example into its own script
     public class DemoSceneController : MonoBehaviour
     {
         [SerializeField]
