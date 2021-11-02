@@ -18,6 +18,11 @@ namespace QuickEye.HowToAsync
 
         private void Awake()
         {
+            InitView();
+        }
+
+        private void InitView()
+        {
             categoryListView.Init(
                 new ExampleCategory("Async Method Invocation", new[]
                 {
@@ -42,15 +47,13 @@ namespace QuickEye.HowToAsync
                     new CodeExample("Modifying One Resource From Multiple Threads",
                         UniTask.UnityAction(ModifyingOneResourceFromMultipleThreads)),
                 })
+                // new ExampleCategory("Gotchas", new[]
+                // {
+                //     new CodeExample("What out for thread switch",
+                //         UniTask.UnityAction(SpawningSecondThread_WithoutTaskRun)),
+                // })
             );
-            categoryListView.SelectionChanged += category =>
-            {
-                exampleList.Setup(category.Examples);
-            };
-            // exampleList.AddNew().Init("Gotchas", new []
-            // {
-            //     new CodeExample("What out for thread switch",UniTask.UnityAction(SpawningSecondThread_WithoutTaskRun)),
-            // });
+            categoryListView.SelectionChanged += category => { exampleList.Setup(category.Examples); };
         }
 
         private static void AsyncCodeInvocation_BadExample()
