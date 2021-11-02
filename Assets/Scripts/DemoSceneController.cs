@@ -1,34 +1,56 @@
 using System.Net.Http;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using QuickEye.Utility;
 using UnityEngine;
 
 namespace QuickEye.HowToAsync
 {
     // TODO:
     // Add README.md
-    // categorize examples. (category > good and bad)
     // explain difference between async and multithreading
     public class DemoSceneController : MonoBehaviour
     {
         [SerializeField]
-        private Container<DemoButton> demoButtonList;
+        private CategoryListView categoryListView;
+
+        [SerializeField]
+        private CodeExampleListView exampleList;
 
         private void Awake()
         {
-            demoButtonList.AddNew().Init("Async Invocation Bad Example", AsyncCodeInvocation_BadExample);
-            demoButtonList.AddNew().Init("Async Invocation Good Examples", UniTask.UnityAction(AsyncCodeInvocation_GoodExamples));
-            demoButtonList.AddNew().Init("Download File", UniTask.UnityAction(DownloadFileAsync));
-            demoButtonList.AddNew().Init("Calculate Complex Data Bad Example",
-                UniTask.UnityAction(CalculateComplexData_BadExample));
-            demoButtonList.AddNew().Init("Calculate Complex Data Bad Example 2",
-                UniTask.UnityAction(CalculateComplexData_BadExample2));
-            demoButtonList.AddNew().Init("Calculate Complex Data Good Example",
-                UniTask.UnityAction(CalculateComplexData_GoodExample));
-            demoButtonList.AddNew().Init("Modifying One Resource From Multiple Threads",
-                UniTask.UnityAction(ModifyingOneResourceFromMultipleThreads));
-            //buttons.AddNew().Init("Async Invocation",UniTask.UnityAction(SpawningSecondThread_WithoutTaskRun));
+            categoryListView.Init(
+                new ExampleCategory("Async Method Invocation", new[]
+                {
+                    new CodeExample("Bad Example", AsyncCodeInvocation_BadExample),
+                    new CodeExample("Good Examples", UniTask.UnityAction(AsyncCodeInvocation_GoodExamples)),
+                }),
+                new ExampleCategory("I/O bound work", new[]
+                {
+                    new CodeExample("Download File", UniTask.UnityAction(DownloadFileAsync)),
+                }),
+                new ExampleCategory("CPU bound work", new[]
+                {
+                    new CodeExample("Don't run Unity API on thread pool",
+                        UniTask.UnityAction(CalculateComplexData_BadExample)),
+                    new CodeExample("Don't switch to main thread to fix this issue",
+                        UniTask.UnityAction(CalculateComplexData_BadExample2)),
+                    new CodeExample("Run CPU bound work on thread pool without Unity API ",
+                        UniTask.UnityAction(CalculateComplexData_GoodExample)),
+                }),
+                new ExampleCategory("Locking threads", new[]
+                {
+                    new CodeExample("Modifying One Resource From Multiple Threads",
+                        UniTask.UnityAction(ModifyingOneResourceFromMultipleThreads)),
+                })
+            );
+            categoryListView.SelectionChanged += category =>
+            {
+                exampleList.Setup(category.Examples);
+            };
+            // exampleList.AddNew().Init("Gotchas", new []
+            // {
+            //     new CodeExample("What out for thread switch",UniTask.UnityAction(SpawningSecondThread_WithoutTaskRun)),
+            // });
         }
 
         private static void AsyncCodeInvocation_BadExample()
@@ -36,7 +58,8 @@ namespace QuickEye.HowToAsync
             // without awaiting async methods you wont see any exceptions that are thrown inside those functions
             // and compiler will give you warnings
             ThrowSomeExceptionsAsync();
-            Debug.Log($"Exception was thrown but it didn't take an effect, task wasn't awaited or got `.Forget()` call");
+            Debug.Log(
+                $"Exception was thrown but it didn't take an effect, task wasn't awaited or got `.Forget()` call");
         }
 
         private static async UniTaskVoid AsyncCodeInvocation_GoodExamples()
@@ -50,7 +73,7 @@ namespace QuickEye.HowToAsync
             {
                 Debug.Log("Exception was caught successfully");
             }
-            
+
             try
             {
                 // or like this
@@ -62,7 +85,7 @@ namespace QuickEye.HowToAsync
             {
                 Debug.Log("Exception was caught successfully");
             }
-            
+
             try
             {
                 // or if you don't want to wait until it is finished call Forget() on the UniTask/UniTaskVoid
@@ -74,7 +97,7 @@ namespace QuickEye.HowToAsync
                 // because we didn't awaited the call we won't get here
                 Debug.Log("Exception was caught successfully");
             }
-            
+
             // If the method will never be awaited use `UniTaskVoid` as the return type
             // it is more efficient
             async UniTaskVoid ExampleMethod()
@@ -98,7 +121,7 @@ namespace QuickEye.HowToAsync
         }
 
         // TODO:  I/O bound task bad example (using thread pool)
-        
+
         // CPU bound Task
         private static async UniTaskVoid CalculateComplexData_BadExample()
         {
