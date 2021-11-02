@@ -8,7 +8,6 @@ namespace QuickEye.HowToAsync
 {
     // TODO:
     // Add README.md
-    // Add spinning cube to demonstrate when main thread is being blocked
     // categorize examples. (category > good and bad)
     // explain difference between async and multithreading
     public class DemoSceneController : MonoBehaviour
@@ -25,8 +24,6 @@ namespace QuickEye.HowToAsync
                 UniTask.UnityAction(CalculateComplexData_BadExample));
             demoButtonList.AddNew().Init("Calculate Complex Data Bad Example 2",
                 UniTask.UnityAction(CalculateComplexData_BadExample2));
-            demoButtonList.AddNew().Init("Calculate Complex Data Good Example",
-                UniTask.UnityAction(CalculateComplexData_GoodExample));
             demoButtonList.AddNew().Init("Calculate Complex Data Good Example",
                 UniTask.UnityAction(CalculateComplexData_GoodExample));
             demoButtonList.AddNew().Init("Modifying One Resource From Multiple Threads",
