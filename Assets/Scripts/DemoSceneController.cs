@@ -3,14 +3,6 @@ using UnityEngine;
 
 namespace QuickEye.HowToAsync
 {
-    // TODO:
-    // Add README.md
-    //  explain difference between async and multithreading
-    // Add "Open Script" feature
-    // Move each example into its own script
-    // Add "Using Cancellation Token"
-    // Add "https://forum.unity.com/threads/ensurerunningonmainthread-can-only-be-called-from-the-main-thread.396597/#post-2672265"
-    // Canno
     public class DemoSceneController : MonoBehaviour
     {
         [SerializeField]
@@ -21,20 +13,7 @@ namespace QuickEye.HowToAsync
 
         [SerializeField]
         private ExampleCategory[] viewModel;
-
-        // private Examplme[] GetCodeExamples()
-        // {
-        //     return (from guid in AssetDatabase.FindAssets("t:MonoScript")
-        //             let path = AssetDatabase.GUIDToAssetPath(guid)
-        //             let script = AssetDatabase.LoadAssetAtPath<MonoScript>(path)
-        //             let type = script.GetClass()
-        //             let att = type.GetCustomAttribute<CodeExampleAttribute>()
-        //             where typeof(CodeExample).IsAssignableFrom(scrType)
-        //             select (CodeExample)Activator.CreateInstance(scrType))
-        //         .ToArray();
-        // }
-
-
+        
         private void Awake()
         {
             InitView();
