@@ -1,16 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using UnityEditor;
 
 namespace QuickEye.HowToAsync
 {
+    [Serializable]
     public class ExampleCategory
     {
-        public string Title;
-        public CodeExample[] Examples;
-
-        public ExampleCategory(string title, params CodeExample[] examples)
-        {
-            Title = title;
-            Examples = examples;
-        }
+        public string title;
+        public MonoScript[] scripts;
     }
 }

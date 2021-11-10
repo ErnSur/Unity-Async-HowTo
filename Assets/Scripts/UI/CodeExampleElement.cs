@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using UnityEngine.Events;
+﻿using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace QuickEye.HowToAsync
@@ -10,13 +10,14 @@ namespace QuickEye.HowToAsync
         private Button runCodeButton, openScriptButton;
 
         [SerializeField]
-        private Text label;
+        private TMP_Text label;
 
-        public void Init(CodeExample example)
+        public void Init(ExampleElementModel exampleElementModel)
         {
             name = 
-            label.text = example.Name;
-            runCodeButton.onClick.AddListener(example.RunCodeAction);
+            label.text = exampleElementModel.title;
+            runCodeButton.onClick.AddListener(exampleElementModel.RunCodeExample);
+            openScriptButton.onClick.AddListener(exampleElementModel.OpenScript);
         }
     }
 }

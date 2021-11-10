@@ -8,7 +8,7 @@ namespace QuickEye.HowToAsync
         [SerializeField]
         private Container<CodeExampleElement> exampleList;
 
-        public void Setup(params CodeExample[] examples)
+        public void Setup(ExampleElementModel[] examples)
         {
             exampleList.Clear();
             foreach (var example in examples)

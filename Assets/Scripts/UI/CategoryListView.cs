@@ -1,6 +1,7 @@
 ﻿using System;
 using QuickEye.Utility;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace QuickEye.HowToAsync
 {
@@ -11,11 +12,14 @@ namespace QuickEye.HowToAsync
         [SerializeField]
         private Container<CategoryListElement> categoryList;
 
+        [SerializeField]
+        private ToggleGroup toggleGroup;
+
         public void Init(params ExampleCategory[] categories)
         {
             foreach (var category in categories)
             {
-                categoryList.AddNew().Init(category, () => SelectionChanged?.Invoke(category));
+                categoryList.AddNew().Init(category, toggleGroup, () => SelectionChanged?.Invoke(category));
             }
         }
     }
