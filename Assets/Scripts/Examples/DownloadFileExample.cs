@@ -10,7 +10,7 @@ namespace QuickEye.HowToAsync
         [ExampleMethod("Download File Async")]
         private static async UniTaskVoid DownloadFileAsync()
         {
-            Log("Downloading File");
+            tl.Log("Downloading File");
             var client = new HttpClient();
             var getStringTask =
                 client.GetByteArrayAsync("http://speedtest.ftp.otenet.gr/files/test10Mb.db");
@@ -18,7 +18,7 @@ namespace QuickEye.HowToAsync
             // You shouldn't use `UniTask.RunOnThreadPool` for I/O bound work
             var contents = await getStringTask;
 
-            Log($"File Downloaded {contents.Length}");
+            tl.Log($"File Downloaded {contents.Length}");
         }
     }
 }

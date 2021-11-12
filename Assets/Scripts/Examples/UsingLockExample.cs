@@ -5,29 +5,55 @@ namespace QuickEye.HowToAsync
 {
     public class UsingLockExample : CodeExampleBase
     {
-        [ExampleMethod("Modifying One Resource From Multiple Threads")]
-        private static async UniTaskVoid ModifyingOneResourceFromMultipleThreads()
+        private const int CorrectResult = 10_000_000;
+        private static int sum;
+        private static readonly object lockObj = new object();
+
+        [ExampleMethod("Modifying One Resource From Multiple Threads without lock", ExampleType.Bad)]
+        private static async UniTaskVoid ModifyingOneResourceFromMultipleThreadsNoLock()
         {
-            var lockObj = new object();
-            var sum = 0;
-            var task1 = UniTask.RunOnThreadPool(IncreaseSum);
-            var task2 = UniTask.RunOnThreadPool(IncreaseSum);
+            sum = 0;
+            var task1 = UniTask.RunOnThreadPool(IncreaseSumNoLock);
+            var task2 = UniTask.RunOnThreadPool(IncreaseSumNoLock);
 
             await (task1, task2); // Same as: await UniTask.WhenAll(task1, task2);
-            Debug.Log($"End: {sum}");
+            Debug.Log($"Sum should be {CorrectResult} but is {sum}");
+        }
 
-            void IncreaseSum()
+        [ExampleMethod("Using lock")]
+        private static async UniTaskVoid ModifyingOneResourceFromMultipleThreads()
+        {
+            sum = 0;
+            var task1 = UniTask.RunOnThreadPool(IncreaseSumWithLock);
+            var task2 = UniTask.RunOnThreadPool(IncreaseSumWithLock);
+
+            await (task1, task2); // Same as: await UniTask.WhenAll(task1, task2);
+            Debug.Log($"Sum should be {CorrectResult} and is {sum}");
+        }
+
+        private static void IncreaseSumNoLock()
+        {
+            for (int i = 0; i < CorrectResult/2; i++)
             {
-                // Lock is important here, without it you won't get an exception but the result will be unpredictable
-                // this is because function is invoked 2 times simultaneously on a different threads
-                // and both of the calls will try to modify the same variable `sum`
-                lock (lockObj)
+                // Because meany threads are doing the same operation
+                sum = sum + 1;
+            }
+        }
+
+        private static void IncreaseSumWithLock()
+        {
+            // Lock is important here, without it you won't get an exception but the result will be unpredictable
+            // this is because function is invoked 2 times simultaneously on a different threads
+            // and both of the calls will try to modify the same variable `sum`
+            tl.Log("Waits to Modify sum");
+            lock (lockObj)
+            {
+                tl.Log("Starts Modifying sum");
+                for (int i = 0; i < CorrectResult/2; i++)
                 {
-                    for (int i = 0; i < 50_000_000; i++)
-                    {
-                        sum += 1;
-                    }
+                    sum += 1;
                 }
+                tl.Log("Stops Modifying sum");
             }
         }
     }

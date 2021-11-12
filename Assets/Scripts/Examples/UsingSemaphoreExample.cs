@@ -13,44 +13,34 @@ namespace QuickEye.HowToAsync
         {
             var semaphoreSlim = new SemaphoreSlim(1, 1);
             var contents = 0;
-            var cancellationTokenSource = new CancellationTokenSource();
-            Debug.Log($"MES1");
-            var task1 = DownloadFile(cancellationTokenSource);
-            Debug.Log($"MES2");
+
+            var task1 = DownloadAndSetFile();
             await UniTask.Delay(TimeSpan.FromSeconds(1));
-            Debug.Log($"MES3");
-            //cancellationTokenSource.Cancel();
-            Debug.Log($"MES5");
-            var task2 = DownloadFile(cancellationTokenSource);
-            var task3 = DownloadFile(cancellationTokenSource);
+            var task2 = DownloadAndSetFile();
+            var task3 = DownloadAndSetFile();
 
-            Debug.Log($"MES6");
-
-            // await UniTask.WhenAny(task1, task2, task3); // Same as: await UniTask.WhenAll(task1, task2);
+            await UniTask.WhenAny(task1, task2, task3); 
+            //await UniTask.WhenAll(task1, task2);
             Debug.Log($"End: {contents}");
 
-            async UniTask DownloadFile(CancellationTokenSource cts)
+            async UniTask DownloadAndSetFile()
             {
+                tl.Log("Waits to download");
+                await semaphoreSlim.WaitAsync();
+                tl.Log("Starts download");
                 try
                 {
-                    await semaphoreSlim.WaitAsync(cts.Token);
-                    var client = new HttpClient();
-
-                    var getStringTask =
-                        client.GetByteArrayAsync("http://speedtest.ftp.otenet.gr/files/test10Mb.db");
-                    Debug.Log($"Hejjo");
-                    contents = (await getStringTask).Length;
-                }
-                catch (Exception e)
-                {
-                    Debug.Log($"MES: {e}");
+                    var file = (await DownloadFileAsync()).Length;
+                    contents = file;
                 }
                 finally
                 {
                     semaphoreSlim.Release();
                 }
+                tl.Log("Finished download");
             }
         }
+
         [ExampleMethod("Using Semaphore CPU Bound")]
         private static async UniTaskVoid UsingSemaphoreCPUBound()
         {
@@ -72,6 +62,12 @@ namespace QuickEye.HowToAsync
 
                 semaphoreSlim.Release();
             }
+        }
+
+        private static async UniTask<byte[]> DownloadFileAsync()
+        {
+            var client = new HttpClient();
+            return await client.GetByteArrayAsync("http://speedtest.ftp.otenet.gr/files/test10Mb.db");
         }
     }
 }

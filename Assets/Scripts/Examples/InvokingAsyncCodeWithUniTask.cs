@@ -1,38 +1,27 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using System;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace QuickEye.HowToAsync
 {
-    public class AsyncInvocationGoodExamples : IExampleScript
+    public class InvokingAsyncCodeWithUniTask : CodeExampleBase
     {
-        public void ExecuteExample()
+        [ExampleMethod("Await Async Method")]
+        private static async UniTaskVoid Example1()
         {
-            AwaitAsyncMethod_Example().Forget();
-            AwaitingTaskObject_Example().Forget();
-            CallAsyncFromNonAsyncMethod_Example();
+            tl.Log("before invoke");
+            // when you await async method you are waiting for it to finish its job
+            await DoSomethingAsync();
+            tl.Log("after invoke");
         }
 
-        [ExampleMethod("AwaitAsyncMethod_Example")]
-        private static async UniTaskVoid AwaitAsyncMethod_Example()
-        {
-            try
-            {
-                // by awaiting async method call will are waiting for it to finish its job
-                await MethodThatCanThrowExceptionAsync();
-            }
-            catch (DemoException)
-            {
-                Debug.Log("Exception was caught successfully");
-            }
-        }
-
-        [ExampleMethod("AwaitingTaskObject_Example")]
+        [ExampleMethod("Awaiting Task Object")]
         private static async UniTaskVoid AwaitingTaskObject_Example()
         {
             try
             {
                 // or like this
-                var task = MethodThatCanThrowExceptionAsync();
+                var task = DoSomethingAsync();
                 // some other work
                 await task;
             }
@@ -49,7 +38,7 @@ namespace QuickEye.HowToAsync
             {
                 // if you don't want to wait until task is finished call Forget() on the UniTask/UniTaskVoid
                 // but in this case we won't be able to catch this exception
-                Debug.Log($"Will throw exception even tho it was invoked in try catch");
+                tl.Log($"Will throw exception even tho it was invoked in try catch");
                 ExampleMethod().Forget();
             }
             catch (DemoException)
@@ -62,15 +51,15 @@ namespace QuickEye.HowToAsync
             // it is more efficient and takes care of throwing exceptions on the main thread
             async UniTaskVoid ExampleMethod()
             {
-                await MethodThatCanThrowExceptionAsync();
+                await DoSomethingAsync();
             }
         }
 
-        private static async UniTask MethodThatCanThrowExceptionAsync()
+        private static async UniTask DoSomethingAsync()
         {
-            Debug.Log($"Should throw an exception");
-            throw new DemoException();
-            await UniTask.CompletedTask;
+            tl.Log("Async method start");
+            await UniTask.Delay(TimeSpan.FromSeconds(.5f));
+            tl.Log("Async method end");
         }
 
         private static async UniTaskVoid TestIfUnityAPIThreadSafe()

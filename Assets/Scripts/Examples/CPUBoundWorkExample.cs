@@ -8,7 +8,7 @@ namespace QuickEye.HowToAsync
         [ExampleMethod("Invoking Unsafe Unity Api Outside Main Thread", ExampleType.Bad)]
         private static async UniTaskVoid Example1()
         {
-            Log("Start data calculation");
+            tl.Log("Start data calculation");
             try
             {
                 var result = await UniTask.RunOnThreadPool(() => DoHeavyComputation(true));
@@ -24,7 +24,7 @@ namespace QuickEye.HowToAsync
         [ExampleMethod("Switching To Main Thread To Do Heavy Computation", ExampleType.Bad)]
         private static async UniTaskVoid SwitchingToMainThreadToDoHeavyComputation()
         {
-            Log("Start data calculation");
+            tl.Log("Start data calculation");
             var result = await UniTask.RunOnThreadPool(async () =>
             {
                 // We can switch to main thread inside the task
@@ -32,17 +32,17 @@ namespace QuickEye.HowToAsync
                 await UniTask.SwitchToMainThread();
                 return DoHeavyComputation(true);
             });
-            Log($"Calculate data result {result}");
+            tl.Log($"Calculate data result {result}");
         }
 
         [ExampleMethod("Offload Heavy Computation To Thread Pool")]
         private static async UniTaskVoid OffloadHeavyComputationToThreadPool()
         {
-            Log("Start data calculation");
+            tl.Log("Start data calculation");
             // Run the logic on another thread but this time don't use Unity API
             // Making the method that accepts `useUnityApi` flag is just for the example purpose and not a part of a good practice
             var result = await UniTask.RunOnThreadPool(() => DoHeavyComputation(false));
-            Log($"Calculate data result {result}");
+            tl.Log($"Calculate data result {result}");
         }
 
         private static int DoHeavyComputation(bool useUnityApi)

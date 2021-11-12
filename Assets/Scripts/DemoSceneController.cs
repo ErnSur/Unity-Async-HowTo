@@ -28,7 +28,11 @@ namespace QuickEye.HowToAsync
                         from methodTuple in ExampleScriptUtils.GetAllExampleMethods(script)
                         select new ExampleElementModel(methodTuple.att.Title,
                             script,
-                            () => { methodTuple.method.Invoke(null, null); })
+                            () =>
+                            {
+                                ThreadLogger.ClearColorCache();
+                                methodTuple.method.Invoke(null, null);
+                            })
                     ).ToArray();
 
                 exampleList.Setup(exampleElementModels);
